@@ -5,6 +5,8 @@ import tweepy
 
 from dotenv import load_dotenv
 
+from app.data.twitter_api_tweet_generator import RootData
+
 dotenv_path = os.getcwd()
 #ERROR: 
 # https://docs.python.org/3/library/sys.html#sys.platform
@@ -47,8 +49,8 @@ headers = get_headers_as_dict(headers=raw_headers)
 
 payload = {}
 # https://developer.twitter.com/en/docs/twitter-api/tweets/search/quick-start/recent-search
-def search_tweet(token):
+def search_tweet(token)->"RootData":
     url = "https://api.twitter.com/2/tweets/search/recent?query="+token
     response = requests.request("GET",url=url,headers=headers)
     data = response.json()
-    return data
+    return RootData(**data)

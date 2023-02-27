@@ -1,10 +1,12 @@
+
 import json
 from django.http import JsonResponse
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound
-from rest_framework import status
+from app.domain.tweet import Tweet
+from utils.analyse_tweet import analyze_tweet
 
 
 from utils.tweepy_api import search_tweet
@@ -17,9 +19,21 @@ def search_tweets(request,token=""):
         raise  NotFound(detail="Please enter text")
     
 
-    tweet_list = search_tweet(token=token)
+    root_data = search_tweet(token=token)
+
     
+    tweet_list = []
+    for tweet in root_data.data :
+         t  = Tweet(text = tweet["text"])
+         tweet_list.append(t)
+        
+    analyzed_tweets = []
+    for tweet in tweet_list:
+        analyzed_tweet = analyze_tweet(tweet)
+        analyzed_tweets.append(analyzed_tweet)
+        
+    json_data = json.dumps(analyzed_tweets,indent=2)
+    return Response(data = json_data)
     
-    return Response(tweet_list)
-    
+ 
     
