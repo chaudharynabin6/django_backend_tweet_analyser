@@ -32,8 +32,17 @@ def search_tweets(request,token=""):
         analyzed_tweet = analyze_tweet(tweet)
         analyzed_tweets.append(analyzed_tweet)
         
-    json_data = json.dumps(analyzed_tweets,indent=2)
-    return Response(data = json_data)
+    # json_data = json.dumps(analyzed_tweets,indent=2)
+    return Response(data = analyzed_tweets)
     
+    
+@api_view(["GET"])
+def analyze_single_text(request,text=""):
+    if text == "":
+        raise NotFound(detail="Please enter text")
+    
+    analyzed_text = analyze_tweet(Tweet(text=text))
+    
+    return Response(data=analyzed_text)
  
     
