@@ -27,8 +27,8 @@ def analyze_tweet(tweet : Tweet) -> "TweetAnalyzed":
 
         
     text = tweet["text"]
-    text = clean_tweet(text)
-    output = pipe(text)[0]
+    clean_text = clean_tweet(text)
+    output = pipe(clean_text)[0]
     label = output.get("label")
     score = output.get('score')
     analyzed_tweet = TweetAnalyzed(text=text,score=score,label=label)
