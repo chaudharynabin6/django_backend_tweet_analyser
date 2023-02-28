@@ -49,8 +49,11 @@ headers = get_headers_as_dict(headers=raw_headers)
 
 payload = {}
 # https://developer.twitter.com/en/docs/twitter-api/tweets/search/quick-start/recent-search
-def search_tweet(token)->"RootData":
-    url = "https://api.twitter.com/2/tweets/search/recent?query="+token
+def search_tweet(keyword,next_token=None)->"RootData":
+    if next_token == None:
+        url = "https://api.twitter.com/2/tweets/search/recent?query="+keyword
+    else :
+        url = "https://api.twitter.com/2/tweets/search/recent?query="+keyword+"&next_token="+next_token
     response = requests.request("GET",url=url,headers=headers)
     data = response.json()
     return RootData(**data)

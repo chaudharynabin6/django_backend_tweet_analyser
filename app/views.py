@@ -14,12 +14,16 @@ from utils.tweepy_api import search_tweet
 # Create your views here.
 
 @api_view(['GET'])
-def search_tweets(request,token=""):
-    if token == "":
+def search_tweets_with_next_token(request,keyword="",next_token=""):
+    if keyword == "":
         raise  NotFound(detail="Please enter text")
     
+    if next_token == "":
+        
+        root_data = search_tweet(keyword=keyword)
 
-    root_data = search_tweet(token=token)
+    else :
+        root_data = search_tweet(keyword=keyword,next_token=next_token)
 
     
     tweet_list = []
@@ -33,8 +37,32 @@ def search_tweets(request,token=""):
         analyzed_tweets.append(analyzed_tweet)
         
     # json_data = json.dumps(analyzed_tweets,indent=2)
-    return Response(data = analyzed_tweets)
+    return Response(data = {"tweets" : analyzed_tweets,"next_token" : root_data.meta["next_token"]})
     
+    
+@api_view(['GET'])
+def search_tweets(request,keyword=""):
+    if keyword == "":
+        raise  NotFound(detail="Please enter text")
+    
+   
+    root_data = search_tweet(keyword=keyword)
+
+   
+
+    
+    tweet_list = []
+    for tweet in root_data.data :
+         t  = Tweet(text = tweet["text"])
+         tweet_list.append(t)
+        
+    analyzed_tweets = []
+    for tweet in tweet_list:
+        analyzed_tweet = analyze_tweet(tweet)
+        analyzed_tweets.append(analyzed_tweet)
+        
+    # json_data = json.dumps(analyzed_tweets,indent=2)
+    return Response(data = {"tweets" : analyzed_tweets,"next_token" : root_data.meta["next_token"]})
     
 @api_view(["GET"])
 def analyze_single_text(request,text=""):
